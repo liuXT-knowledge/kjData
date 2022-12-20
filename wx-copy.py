@@ -86,11 +86,23 @@ for window in driver.window_handles:
     if "papers" in driver.title and "VISIBLE" in driver.title:
         break
 papersCount = driver.find_element(AppiumBy.XPATH,"//wx-view[@class='questionItem-index--papers-index']").text.strip()
+
 exec_count = int(papersCount.split(' ')[1])
 def task():
     global result
+    try:
+        tableTemp = driver.find_element(AppiumBy.XPATH,"//wx-view[@class='questionItem-index--view-input']")
+        tableHtml = ''
+        if( tableTemp is not None and tableTemp.text.strip() == '请输入答案（选填）'):
+            tableHtml = driver.find_element(AppiumBy.XPATH,"//table").get_property('outerHTML')
+            print(tableHtml)
+            #with open(rf'E:\Projects\vscode\python\kj\wx\{bookName}\txt\{zj+10}.txt','w',encoding='utf-8') as file:
+            #    file.write(''.join(tableHtml))
+    except :
+        pass
     driver.swipe(width*0.9,height*0.5,width*0.1,height*0.5,1000)
     driver.implicitly_wait(5)
+    return
     answer = driver.find_elements(AppiumBy.XPATH,"//wx-view[@class='pagers-bar-icon']")[1]
     answer.click()
     driver.implicitly_wait(5)
@@ -98,6 +110,10 @@ def task():
     swiper = driver.find_element(AppiumBy.XPATH,"//wx-swiper[@class='papers-swiper']")
     curID = swiper.get_attribute('current')
     curItem = swiper.find_element(AppiumBy.XPATH,f"//wx-swiper-item[@data-index={curID}]").text
+    if(tableHtml == ''):
+        return
+    else :
+        curItem += tableHtml
     result.append(curItem + "\n------------------\n")
     driver.swipe(width*0.9,height*0.5,width*0.1,height*0.5,1000)
     driver.implicitly_wait(5)
@@ -108,7 +124,7 @@ def start_task():
     if exec <= exec_count:
         task()
         threading.Timer(6,start_task).start()
-    else:
-        with open(rf'E:\Projects\vscode\python\kj\wx\{bookName}\txt\{zj+1}.txt','w',encoding='utf-8') as file:
-            file.write(''.join(result))
+    #else:
+    #    with open(rf'E:\Projects\vscode\python\kj\wx\{bookName}\txt\{zj+1}.txt','w',encoding='utf-8') as file:
+    #        file.write(''.join(result))
 start_task()
