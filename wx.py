@@ -21,7 +21,7 @@ desired_caps = {
 }
 
 zj = int(input('输入抓取的章节：')) - 1
-bookName = 'jjf'
+bookName = 'sw'
 driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_caps)
 driver.implicitly_wait(30)
 
@@ -89,8 +89,6 @@ papersCount = driver.find_element(AppiumBy.XPATH,"//wx-view[@class='questionItem
 exec_count = int(papersCount.split(' ')[1])
 def task():
     global result
-    driver.swipe(width*0.9,height*0.5,width*0.1,height*0.5,1000)
-    driver.implicitly_wait(5)
     answer = driver.find_elements(AppiumBy.XPATH,"//wx-view[@class='pagers-bar-icon']")[1]
     answer.click()
     driver.implicitly_wait(5)
@@ -99,8 +97,9 @@ def task():
     curID = swiper.get_attribute('current')
     curItem = swiper.find_element(AppiumBy.XPATH,f"//wx-swiper-item[@data-index={curID}]").text
     result.append(curItem + "\n------------------\n")
-    driver.swipe(width*0.9,height*0.5,width*0.1,height*0.5,1000)
+    driver.swipe(width*0.9,height*0.5,width*0.1,height*0.5,800)
     driver.implicitly_wait(5)
+    time.sleep(1)
 
 def start_task():
     global exec,exec_count,zj   
